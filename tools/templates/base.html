@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover AI Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    {% load static %}
+    <link rel="icon" href="{% static 'files/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'style/style.css' %}">
+    
+    <style>
+        :root{
+            --bs-dark-rgb:33,37,41;
+            --bs-white-rgb:255,255,255;
+            --background-rgb1:#212529;
+            --background-rgb2:#212529;
+        }
+        /* div,body,input,form{
+            transition: background 0.3s !important;
+        } */
+        main div::-webkit-scrollbar{
+            display: none;
+        }
+       
+        .drop-down-hover li button:hover{
+            background-color:#4b4b4b53 !important;
+        }
+
+    </style>
+    <style>
+        .bootstrap-tagsinput{
+            background-color:transparent !important;
+            display: flex !important;
+            flex-wrap: wrap;
+            justify-content: start;
+        }
+        .tag{
+            background-color: rgb(0, 0, 0);
+            padding:2px 6px;
+            margin: 2px;
+            border-radius:3px;
+        }
+        .bootstrap-tagsinput input{
+            color: white;
+            width:auto;
+        }
+        .bootstrap-tagsinput input::placeholder{
+            content: "Tags for tool";
+        }
+    </style>
+    <script>
+         window.onload = function (e){
+            ChangeTheme(localStorage.getItem("apptheme"))
+        }
+    </script>
+</head>
+<body class="position-relative bg-dark " id="bodytag">
+    <div class="bg-dark d-flex position-fixed top-0 w-100" style="z-index:100;">
+
+            <a href="/" class="me-auto my-auto fs-3 text-decoration-none text-white mx-3">
+                <i class="bi bi-wrench-adjustable-circle"></i>
+                Ai Tools</a>
+            <button class="btn outline-none" id="themechangebtn" title="Change App Theme" onclick="ManageTheme()"><i class="bi bi-brightness-alt-high-fill text-white fs-3"></i></button>
+
+            {% if request.user.is_authenticated %}
+            <div class="btn-group">
+                <button class="m-2 btn btn-sm p-1 outline-none text-white dropdown-toggle d-flex justify-content-center align-items-center" data-bs-toggle="dropdown" aria-expanded="false"> 
+                    <i class="bi bi-plus fs-2 text-white"></i>
+                 </button>
+                <ul class="dropdown-menu bg-dark drop-down-hover">
+                  <li><button class="text-white dropdown-item"><i class="bi bi-qr-code-scan mx-2"></i> Scan Url</button></li>
+                  <li><button class="text-white dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i class="bi bi-view-list mx-2" ></i> Entries</button></li>
+                </ul>
+            </div>
+            {% endif %}
+            <a href="/admin" class="btn outline-none my-auto">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRW76Uoole_PZ9xzWCzmKYnTa_YUyJTGOmHg&s" class="rounded-circle" width="35px" alt="">
+            </a>
+    </div>
+
+    {% block main-content %}
+
+    {% endblock main-content %}
+
+    <style>
+        .bg-secondary{
+            /* background-color:#1a1a1a !important; */
+            color: aliceblue;
+        }
+    </style>
+
+
+<div class="container bg-dark mb-3">
+    <footer class="px-2 bg-dark">
+            <hr class="text-white">
+            <div class="d-flex flex-wrap">
+                <div class="me-auto text-white my-auto">
+                    <a href="/" class="me-auto my-auto fs-3 text-decoration-none text-white mx-3"><i class="bi bi-wrench-adjustable-circle mx-2"></i>Ai Tools</a>
+                    <p class="px-4">© 2025 Ai-Tools, India</p>
+                </div>
+                <div class="text-white d-flex flex-nowrap">
+                        <form action="/user/subscribe" class="mx-2 my-auto" method="post">
+                            {% csrf_token %}
+                            <input type="email" name="email" id="email" class="mx-1 rounded px-2 py-1 bg-dark text-white border" placeholder="send your email">
+                            <input type="submit" value="Subscribe" class="m-1 btn btn-secondary btn-sm py-1 px-2">
+                        </form>
+                    </div>
+
+                <div class="text-white mx-2 my-auto">
+                    <span style="font-size: 12px;margin: 5px;">Share To</span>
+                    <div class="d-flex">
+                        <a class="mx-2" href="/a.html"><i class="bi bi-twitter"></i></a>
+                        <a class="mx-2" href="/a.html"><i class="bi bi-facebook"></i></a>
+                        <a class="mx-2" href="/a.html"><i class="bi bi-instagram"></i></a>
+                        <a class="mx-2" href="/a.html"><i class="bi bi-whatsapp"></i></a>
+                        <a class="mx-2" href="/a.html"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+    </footer>
+</div>
+
+
+      
+<!-- add new tool form modal  -->
+<main class="offcanvas offcanvas-end bg-dark" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header bg-dark">
+    <h3 class="offcanvas-title text-white" id="offcanvasRightLabel">Add New Tool</h3>
+    <button type="button" class="bi bi-x-lg btn text-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body bg-dark">
+
+        <h6 class="text-white">Add Automatically</h6>
+        <div class="bg-dark p-2 form-control">
+            <form action="/new-tool/" method="post" class="bg-dark d-flex flex-column" id="newToolUrlForm">
+                {% csrf_token %}
+                <input type="url" name="url" id="newtoolurl" class="w-100 bg-dark outline-none text-white" placeholder="Tool Url">
+                <div class="d-flex">
+
+                    <div class="form-check form-switch me-auto p-0 ml-0">
+                       <div class="d-flex flex-nowrap flex-row p-0 m-0">
+                        <label for="paidtool" class="text-white" style="width: -webkit-fill-available">Tool Type</label>
+                        <select class="w-100 bg-dark rounded text-white outline-none" id="paidtool" name="paidtool" aria-label="Default select example">
+                            <option class="bg-dark text-white" selected>Default</option>
+                            <option class="bg-dark text-white" value="Free">Free</option>
+                            <option class="bg-dark text-white" value="Freemium">Freemium</option>
+                            <option class="bg-dark text-white" value="Premium">Premium</option>
+                        </select>
+                       </div>
+                    </div>
+                    <input type="submit" value="Fetch Now" class="btn btn-secondary btn-sm">
+                </div>
+            </form>
+        </div>
+
+        <div class="my-5">
+            <p class="w-100 text-center p-0 m-0 text-white">Or</p>
+            <hr class="text-white w-100 p-0 m-0">
+        </div>
+
+        <h6 class="text-white">Add Manually <span style="font-size: 12px;color: rgb(155, 155, 155);">(Recomended)</span></h6>
+        <div class="bg-dark p-2 form-control">
+            <form action="/manual-newtool/" method="post" class="bg-dark" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="my-2">
+                    <label class="text-white">Tool Icon</label>
+                    <div class="d-flex flex-nowrap">
+                        <input type="url" title="Enter the tool icon url" name="favicon" onchange="showIconUrl(this)" id="iconurl" class="my-0 w-100 outline-none bg-dark text-white" placeholder="Icon Url: https://tool/favicon.png">
+                        {% comment %} <input type="file" name="iconfile" onchange="previewImage(this)" id="iconfile" hidden class="bg-dark text-white w-100 form-control" accept="image/*">
+                        <span class="text-white m-1">Or</span>
+                        <button type="button" onclick="document.getElementById('iconfile').click()" title="Upload local icon" class="btn btn-sm border p-1"><i class="bi bi-image-alt text-white"></i></button> {% endcomment %}
+                        <div style="width:45px;height:40px;" class="rounded-circle shadow-lg border mx-1">
+                            <img  id="toolIconImg" style="width: 100%;height:100%;" src="https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/1024px/1f466-1f3ff.png" class="rounded-circle shadow-lg" alt="tool icon">
+                        </div>
+                    </div>
+                    <hr class="text-white m-0 p-0">
+                </div>
+
+                <!-- <hr class="text-white"> -->
+
+                <div class="my-2">
+                    <label class="text-white">Tool Url</label>
+                    <input type="text" required name="url" class=" my-0 w-100 outline-none bg-dark text-white" placeholder="Url">
+                    <hr class="text-white m-0 p-0">
+
+                </div>
+                <div class="my-4">
+                    <label class="text-white">Tool Name</label>
+                    <input type="text" required name="title" id="toolname" class=" my-0 w-100 outline-none bg-dark text-white" placeholder="Name">
+                    <hr class="text-white m-0 p-0">
+
+                </div>
+
+                <div class="my-4">
+                    <label class="text-white">Tool Description</label>
+                    <input type="text" required name="description" id="toolaim" class=" my-0 w-100 outline-none bg-dark text-white" placeholder="tool description">
+                    <hr class="text-white m-0 p-0">
+                </div>
+
+                <div class="my-4">
+                    <label class="text-white my-1">Keywords</label>
+                    <input type="text" required value="" name="keywords" class="outline-none" placeholder="tags for ai tool" data-role="tagsinput" />
+
+                    <hr class="text-white m-0 p-0">
+                </div>
+
+                <div class="my-2">
+                    <label class="form-check-label text-white my-1" for="paidtoolm">Select Tool Type</label>
+                    <select class="w-100 bg-dark rounded p-1 text-white border-none" id="paidtoolm" name="paid" aria-label="Default select example">
+                        <option class="bg-dark text-white" selected>Default</option>
+                        <option class="bg-dark text-white" value="Free">Free</option>
+                        <option class="bg-dark text-white" value="Freemium">Freemium</option>
+                        <option class="bg-dark text-white" value="Premium">Premium</option>
+                    </select>
+                </div>
+
+
+                <div class="d-flex mt-4">
+                    <button type="submit" class="btn btn-success me-auto">Import The Tool</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+
+<script  src="{% static '/script/script.js?time_v={{time_v}}' %}"></script>
+
+
+    <script>
+        let themechangebtn = document.getElementById("themechangebtn")
+
+        function ChangeTheme(theme='light'){
+            
+            let child = themechangebtn.firstElementChild;
+            let bg1 = getComputedStyle(document.documentElement).getPropertyValue('--background-rgb1');
+            let bg2 = getComputedStyle(document.documentElement).getPropertyValue('--background-rgb2');
+
+
+            if (child.classList.contains("bi-brightness-alt-high-fill") && theme == "light") {
+                
+                child.classList.remove("bi-brightness-alt-high-fill")
+                child.classList.add("bi-moon-fill")
+                
+                document.documentElement.style.setProperty('--bs-dark-rgb', '248,249,250');
+                document.documentElement.style.setProperty('--bs-white-rgb', '33,37,41');
+            }
+            else{
+
+                child.classList.remove("bi-moon-fill")
+                child.classList.add("bi-brightness-alt-high-fill")
+                
+                document.documentElement.style.setProperty('--bs-white-rgb', '255,255,255');
+                document.documentElement.style.setProperty('--bs-dark-rgb', '33,37,41');
+            }
+            
+        }
+       
+        function ManageTheme(){
+
+            if(localStorage.getItem("apptheme") == undefined){
+                localStorage.setItem("apptheme","dark");
+            }
+            else{
+                if (localStorage.getItem("apptheme") == "dark") {
+                    localStorage.setItem("apptheme","light");
+                }
+                else{
+                    localStorage.setItem("apptheme","dark");
+                }
+            }
+
+            ChangeTheme(localStorage.getItem("apptheme"));
+
+        }
+        
+        function previewImage(target){
+            let toolIconImg = document.getElementById("toolIconImg");
+
+            const [file] = target.files
+            if (file) {
+                toolIconImg.src = URL.createObjectURL(file)
+            }
+        }
+       
+        </script>
+
+       
+<script>
+
+    function addNewToolInBox(data){
+        let tools_box = document.getElementById("tools_box")
+        console.log("data i s" ,data)
+
+        item = `<div style="max-width: 20rem;" class="card position-static shadow-sm border m-2 bg-dark rounded overflow-hidden">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                        <img alt="ClipNow | Login favicon" src="${data['favicon']}" width="32" height="32" class="rounded-circle me-3">
+                        <h3 class="fs-6 mb-0 text-truncate text-white">${data['title']}</h3>
+                        </div>
+                        <p class="small mb-2 text-white" style="min-height: 90px;">${data['description']}</p>
+                        <div class="d-flex tool-tags">
+                            <a class="bg-dark m-1" href="/">Image</a>
+                            <a class="bg-dark m-1" href="/">Text</a>
+                            <a class="bg-dark m-1" href="/">Article</a>
+                            <a class="bg-dark m-1" href="/">News</a>
+                        </div>
+                        <div class="d-flex justify-content-between tool-tags">
+                            <span class="text-info"><i class="bi bi-hand-thumbs-up-fill mx-2"></i>1.4k</span>
+                            <span class="text-info"><i class="bi bi-send-fill mx-2"></i>21k</span>
+                            <span class="text-info"><i class="bi bi-bookmark-check-fill mx-2"></i>0.7k</span>
+                        </div>
+                        <a href="${data["url"]}" target="_blank" rel="noopener noreferrer" class="text-primary small text-decoration-none">${data['url']}</a>
+                    </div>
+                </div>`
+            
+        tools_box.innerHTML= item + tools_box.innerHTML
+
+    }
+
+    // this is the id of the form
+    $("#newToolUrlForm").submit(function(e) {
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var form = $(this);
+        var actionUrl = form.attr('action');
+        console.log("Form data is :",form.serialize())
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: form.serialize(), // serializes the form's elements.
+                success: function(data)
+            {
+                console.log(JSON.parse(data)); // show response from the php script.
+                addNewToolInBox(JSON.parse(data))
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

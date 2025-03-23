@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        #reader { width: 300px; margin: auto; }
+        #upload { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Scan QR Code</h2>
+
+    <!-- QR Scanner Using Camera -->
+    <div id="reader"></div>
+    <p><strong>Scanned Result:</strong> <span id="result"></span></p>
+
+    <!-- Upload Image to Scan -->
+    <input type="file" id="upload" accept="image/*">
+    <canvas id="qr-canvas" style="display: none;"></canvas>
+
+    <script>
+        // Function to handle QR Code scanning using the camera
+        function onScanSuccess(decodedText, decodedResult) {
+            document.getElementById("result").innerText = decodedText; // Display scanned text
+            window.location.href = decodedText; // Redirect (optional)
+        }
+
+        function onScanFailure(error) {
+            console.warn(`QR Code scan error: ${error}`);
+        }
+
+        let scanner = new Html5Qrcode("reader");
+
+        scanner.start(
+            { facingMode: "environment" }, // Use back camera
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            onScanSuccess,
+            onScanFailure
+        );
+
+        // Function to scan QR code from an uploaded image
+        document.getElementById("upload").addEventListener("change", function(event) {
+            let file = event.target.files[0];
+            if (!file) return;
+
+            let reader = new FileReader();
+            reader.onload = function() {
+                let img = new Image();
+                img.src = reader.result;
+                img.onload = function() {
+                    let canvas = document.getElementById("qr-canvas");
+                    let ctx = canvas.getContext("2d");
+
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    let code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                    if (code) {
+                        document.getElementById("result").innerText = code.data;
+                        window.location.href = code.data; // Redirect (optional)
+                    } else {
+                        alert("No QR code found in image.");
+                    }
+                };
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+    
+
+</body>
+</html>

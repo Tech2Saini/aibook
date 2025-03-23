@@ -1,0 +1,72 @@
+
+
+
+h1{
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 2.5rem;
+}
+
+input{
+    border: none;
+    box-shadow: none;
+    outline: none !important;
+}
+
+.aim{
+    font-weight: 600;
+}
+
+#suggesion_box{
+    height:260px !important;
+}
+#suggesion_box::-webkit-scrollbar{
+    display: none;
+}
+
+#suggesion_box div{
+    cursor: pointer;
+}
+
+#suggesion_box .suggestions-item {
+    margin-bottom: 5px !important;
+}
+#suggesion_box .suggestions-item:hover{
+    background-color: #5353539f !important;
+}
+
+.radiocard{
+    border: 2px solid #5f5f5fc4 !important;
+    /* pointer-events:none; */
+}
+.radiocard:hover{
+    background-color: #5f5f5fc4;
+    color: white;
+}
+
+.radiocard label{
+    cursor: pointer;
+}
+
+.tool-tags a{
+    text-decoration: none;
+    background-color: #ffffff;
+    border-radius: 3px;
+    padding: 3px 5px;
+    font-size: 12px;
+    color: #737373;
+    box-shadow: 0 0 1px rgb(126, 125, 125);
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.tool-tags a:hover{
+    background-color: #d8d8d8;
+}
+
+.outline-none{
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}

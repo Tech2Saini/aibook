@@ -1,0 +1,34 @@
+# Django settings
+# Install dependencies: pip install django djangorestframework pyzbar opencv-python
+
+from django.shortcuts import render
+from django.http import JsonResponse
+import cv2
+from pyzbar.pyzbar import decode
+import numpy as np
+
+# View to render the scanner page
+def scanner(request):
+    return render(request, 'scanner.html')
+
+# API to process the QR code data
+def process_qr(request):
+    if request.method == 'POST' and request.FILES.get('image'):
+        image = request.FILES['image'].read()
+        np_arr = np.frombuffer(image, np.uint8)
+        img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        qr_codes = decode(img)
+        
+        data_list = [qr.data.decode('utf-8') for qr in qr_codes]
+        return JsonResponse({'data': data_list})
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+# urls.py
+from django.urls import path
+from .views import scanner, process_qr
+
+urlpatterns = [
+    path('', scanner, name='scanner'),
+    path('process_qr/', process_qr, name='process_qr'),
+]

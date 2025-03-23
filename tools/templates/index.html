@@ -1,0 +1,479 @@
+{% extends "base.html" %}
+
+{% block main-content %}
+{% load humanize %}
+{% load static %}
+<style>
+    .dropdown-menu-box{
+        position: absolute !important;
+        right: 0px !important;
+        top: 100% !important;
+        border-radius: 5px !important;
+        padding: 5px !important;
+        margin: 5px !important;
+        box-shadow: 0 0 5px #68686849 !important;
+        width: 100%;
+        max-width: 25rem;
+    }
+    li:hover a{
+        background-color: rgba(102, 102, 102, 0.329) !important;
+    }
+    #suggesion_box li{
+        cursor: default;
+        max-height: 30px;
+        text-overflow: ellipsis;
+
+    }
+    #suggesion_box li:hover{
+        background-color: rgba(102, 102, 102, 0.329) !important;
+    }
+    .text-truncate-auto{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-height: 15px;
+        font-size: 11px;
+    }
+    .cursor-style-alias{
+        cursor:default !important;
+    }
+    .btn-black{
+        background-color: rgb(12, 12, 12);
+        color: white !important;
+    }
+    .btn-black:hover{
+        background-color: rgba(22, 12, 12, 0.856) !important;
+        color: white !important;
+    }
+</style>
+
+<div class="container mt-5 py-5">
+    <h1 class="text-center text-white">Discover AI Tools</h1>
+    <p class="text-center mb-4 aim text-white">Find the perfect AI tool for your needs. Browse our curated collection of artificial intelligence applications.</p>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8" style="height: fit-content;">
+            <form action="/search/" method="get">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <span style="font-size: 13px;font-weight:500;" class="text-white">🛠 {{tools|length}}k Ai Tools</span>
+                    </div>
+                    <div>
+                        <span style="font-size: 13px;font-weight:500;" class="text-white">🌀102 Categories</span>
+                    </div>
+                </div>
+                
+                <div class="mb-0 form-control bg-dark d-flex justify-content-start align-items-center flex-row flex-nowrap" id="searchcontainer">
+                    <span class="d-flex justify-content-center align-items-center px-1 text-white" id="basicaddon1">
+                        <i class="bi bi-search fs-5"></i>
+                    </span>
+                    <input autocomplete="off" name="query" type="text" required {% if query %}value="{{query}}"{% endif %} id="searchbox" class="text-white bg-dark w-100 border-0 py-0 mx-1 outline-none" placeholder="Search for AI tools" aria-label="Search" aria-describedby="basic-addon1">
+                    
+                    <button class="btn btn-secondary btn-sm" type="submit" id="submitbtn">Search</button>
+                    <button id="clearbtn" type="button" class="btn outline-none p-0 px-1 btn-sm btn-light mx-1 bg-dark text-white {% if not query %}d-none{% endif %}" onclick="document.getElementById('searchbox').value='';this.classList.add('d-none');"> <i class="bi bi-x-lg"></i></button>
+                </div>
+
+                {% if tool_tags %}
+                <a href="/" class="btn btn-secondary m-1 btn-sm py-1" style="height:max-content;" title="Remove {{tool_tags}} Tag">{{tool_tags}} <i class="bi bi-x-lg"></i></a>
+
+                <!-- <div class="d-flex m-1 rounded border p-1">
+                    <div class="me-auto">
+                    <a href="/" class="btn btn-secondary btn-sm py-1" style="height:max-content;" title="Remove {{tool_tags}} Tag">{{tool_tags}} <i class="bi bi-x-lg"></i></a>
+                    <input type="text" name="" class="outline-none rounded bg-dark text-white" id="" placeholder="Find new Tags">
+                    </div>
+                    <a href="/" class="ml-auto"><i class="bi bi-x-lg fs-5"></i></a>
+                </div> -->
+                {% endif %}
+                <div class="card bg-dark w-100 rounded-top-0 w-100 overflow-auto py-1 d-none" id="suggesion_box">
+                </div>
+
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-start align-items-center flex-wrap">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                
+                                <a {% if tool_type == 'Text generators' %} href="/" {% else %} href="/search/?type=Text generators"{% endif %}  class="{% if tool_type == 'Text generators' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">📝</span> 
+                                    <label for="textgenerators">Text generators</label>
+                                    {% if tool_type == 'Text generators' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                            
+                                <a {% if tool_type == 'Audio generators' %} href="/" {% else %} href="/search/?type=Audio generators"{% endif %}  class="{% if tool_type == 'Audio generators' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🎵</span> 
+                                    <label for="audiogenerators">Audio generators</label>
+                                    {% if tool_type == 'Audio generators' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                                
+                                <a {% if tool_type == 'Education' %} href="/" {% else %} href="/search/?type=Education"{% endif %}  class="{% if tool_type == 'Education' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🎓</span> 
+                                    <label for="Education">Education</label>
+                                    {% if tool_type == 'Education' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                                                            
+                                <a {% if tool_type == 'Automation' %} href="/" {% else %} href="/search/?type=Automation"{% endif %}  class="{% if tool_type == 'Automation' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">⚙️</span> 
+                                    <label for="Automation">Automation</label>
+                                    {% if tool_type == 'Automation' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                                
+                                <a {% if tool_type == 'Art generators' %} href="/" {% else %} href="/search/?type=Art generators"{% endif %}  class="{% if tool_type == 'Art generators' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🎨</span> 
+                                    <label for="artgenerators">Art generators</label>
+                                    {% if tool_type == 'Art generators' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                                
+                                
+                                <a {% if tool_type == 'Sound' %} href="/" {% else %} href="/search/?type=Sound"{% endif %}  class="{% if tool_type == 'Sound' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🔊</span> 
+                                    <label for="Sound">Sound</label>
+                                    {% if tool_type == 'Sound' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                                
+                                <a {% if tool_type == 'Marketing' %} href="/" {% else %} href="/search/?type=Marketing"{% endif %}  class="{% if tool_type == 'Marketing' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">📢</span> 
+                                    <label for="Marketing">Marketing</label>
+                                    {% if tool_type == 'Marketing' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                            
+                                <a {% if tool_type == 'Video' %} href="/" {% else %} href="/search/?type=Video"{% endif %}  class="{% if tool_type == 'Video' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🎬</span> 
+                                    <label for="Video">Video</label>
+                                    {% if tool_type == 'Video' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                                
+                                <a {% if tool_type == 'Writing' %} href="/" {% else %} href="/search/?type=Writing"{% endif %}  class="{% if tool_type == 'Writing' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">✍️</span> 
+                                    <label for="Writing">Writing</label>
+                                    {% if tool_type == 'Writing' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                            
+                                <a {% if tool_type == 'Chatbot' %} href="/" {% else %} href="/search/?type=Chatbot"{% endif %}  class="{% if tool_type == 'Chatbot' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🤖</span> 
+                                    <label for="Chatbot">Chatbot</label>
+                                    {% if tool_type == 'Chatbot' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                            
+                                <a {% if tool_type == 'Design' %} href="/" {% else %} href="/search/?type=Design"{% endif %}  class="{% if tool_type == 'Design' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🎨</span> 
+                                    <label for="Design">Design</label>
+                                    {% if tool_type == 'Design' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+
+                                <a {% if tool_type == 'Productivity' %} href="/" {% else %} href="/search/?type=Productivity"{% endif %}  class="{% if tool_type == 'Productivity' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🚀</span> 
+                                    <label for="Design">Productivity</label>
+                                    {% if tool_type == 'Productivity' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                                <a {% if tool_type == 'Animated video' %} href="/" {% else %} href="/search/?type=Animated video"{% endif %}  class="{% if tool_type == 'Animated video' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">📽️</span> 
+                                    <label for="Animated video">Animated video</label>
+                                    {% if tool_type == 'Animated video' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                                <a {% if tool_type == 'Voice' %} href="/" {% else %} href="/search/?type=Voice"{% endif %}  class="{% if tool_type == 'Voice' %}bg-secondary{% else %}text-white {% endif %} border radiocard rounded btn m-1 py-1" style="min-width: fit-content;">
+                                    <span class="aiIcons">🎤</span> 
+                                    <label for="Voice">Voice</label>
+                                    {% if tool_type == 'Voice' %}
+                                    <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </a>
+                        
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    
+    
+    
+    <div class="pt-3 position-relative" style="border-top: 1px solid rgba(128, 128, 128, 0.527);">
+        <div class="d-flex">
+
+            <h2 class="fs-4 fw-semibold me-auto text-white mb-2">🛠 Ai Tools List <sub class="text-secondary">({{counts}})</sub></h2>
+            <div class="dropdown">
+                <a class="btn dropdown-toggle text-white outline-none" id="filterbtn" type="button">
+                  <i class="bi bi-funnel"></i>
+                </a>
+                
+            </div>
+        </div>
+            <div class="dropdown-menu-box bg-dark d-none" id="filters_box">
+                
+                <div class="row p-2">
+                    <div class="col">
+                        <div class="row">
+                            <h6 class="text-white">Tool Type</h6>
+                            <div class="dropdown">
+                                <button class="btn text-white outline-none bg-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Select Type
+                                </button>
+                                <ul class="dropdown-menu bg-dark p-1">
+                                    <li><a role="button" onclick="addFilter('paid','')" class="dropdown-item bg-dark text-white">Default</a></li>
+                                    <li><a role="button" onclick="addFilter('paid','free')" class="dropdown-item bg-dark text-white">Free</a></li>
+                                    <li><a role="button" onclick="addFilter('paid','freemium')" class="dropdown-item bg-dark text-white">Freemium</a></li>
+                                    <li><a role="button" onclick="addFilter('paid','premium')" class="dropdown-item bg-dark text-white">Premium</a></li>
+            
+                                </ul>
+                              </div>
+                            
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row">
+                            <h6 class="text-white">Apply Sorting</h6>
+                            <div class="dropdown">
+                                <button class="btn text-white  outline-none bg-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Select Sorting
+                                </button>
+                               
+                                <ul class="dropdown-menu bg-dark p-1">
+                                    <li>
+                                        <label for="" class="text-white">Uploaded</label>
+                                            <li><a role="button" onclick="addFilter('sort','t')" class="dropdown-item bg-dark text-white text-decoration-none">Oldest</a></li>
+                                            <li><a role="button" onclick="addFilter('sort','-t')" class="dropdown-item bg-dark text-white text-decoration-none">Newest</a></li>
+                                    </li>
+                                    <li>
+                                        <label for="" class="text-white">Name</label>
+                                            <li><a role="button" onclick="addFilter('sort','-n')" class="dropdown-item bg-dark text-white">A-z</a></li>
+                                            <li><a role="button" onclick="addFilter('sort','n')" class="dropdown-item bg-dark text-white">Z-A</a></li>
+                                    </li>
+                                    <li>
+                                        <label for="" class="text-white">Rating</label>
+                                            <li><a role="button" onclick="addFilter('sort','-r')" class="dropdown-item bg-dark text-white">High</a></li>
+                                            <li><a role="button" onclick="addFilter('sort','r')" class="dropdown-item bg-dark text-white">Low</a></li>
+                                    </li>
+                                </ul>
+                              </div>
+
+                        </div>
+                    </div>
+                </div>
+              
+            </div>
+    </div>
+        
+    
+    <div class="row g-4" id="website-list">
+
+        <div class="d-flex flex-wrap" id="tools_box">
+            <style>
+                .tags-box::-webkit-scrollbar{
+                    display: none;
+                }
+            </style>
+        
+            {% for tool in tools %}
+                <div style="max-width: 22rem;" class="cursor-style-alias card position-static shadow-sm border m-2 mx-auto bg-dark rounded overflow-hidden">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img alt="ClipNow | Login favicon" src="{{tool.favicon}}" width="40" height="40" class="p-1 me-2">
+                            <div class="d-flex flex-column text-truncate">
+                                <span title="{{tool.title}}" class="fs-5 text-truncate mb-0 text-white">{{tool.title|title}} </span>
+                                <span class="text-warning" style="font-size: small;">{{tool.paid}}</span>
+                            </div>
+
+                        </div>
+                        <p class="small mb-2 text-white" title="{{tool.description}}" style="min-height: 90px;">{{tool.description|truncatechars:150}}</p>
+                        <div class="d-flex tool-tags flex-nowrap overflow-auto tags-box">
+                            {% for tag in tool.keywords %}
+                                <a class="bg-dark m-1 px-2 py-1" style="min-width:fit-content;" href="/search/?tags={{tag}}" title="{{tag}}">{{tag|truncatechars:20}}</a>
+                            {% endfor %}
+                        </div>
+                        <div class="d-flex justify-content-between tool-tags">
+                            <span class="text-secondary"><i class="bi bi-hand-thumbs-up mx-2"></i>{{tool.total_likes}}</span>
+                            <span class="text-secondary"><i class="bi bi-send mx-2"></i>{{tool.shares}}</span>
+                            <span class="text-secondary"><i class="bi bi-bookmark-check mx-2"></i>{{tool.total_bookmarks}}</span>
+                        </div>
+                        <span class="text-secondary d-block" style="font-size: 12px;">Upload: {{tool.created_at|naturaltime}}</span>
+
+                        <div class="d-flex align-items-center mt-2">
+                            <a href="{{tool.url}}" target="_blank" rel="noopener noreferrer" class="text-primary p-1 text-truncate me-auto small text-decoration-none"><i class="bi bi-arrow-up-right-square"></i> {{tool.url}}</a>
+                            <a href="/"><img width="18px" src="{% static 'files/share.png' %}" alt=""></a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="container">
+                    <div class="d-flex flex-column ext-center">
+                        <h3 class="text-info text-center">There is no Ai Tool for your requirement</h3>
+                        <img src="{% static 'files/nodata.gif' %}" width="300px" class="mx-auto"  alt="">
+                        <a href="/" class="btn btn-secondary mx-auto my-4" style="width:15rem;">Clear all Filters</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+    </div>
+    
+</div>
+
+
+    {% if is_paginated %}
+        <nav aria-label="navigation bg-dark ">
+            <ul class="pagination justify-content-center bg-dark my-4">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link bg-dark" role="button" onclick="changePage('page','1')" title="First Page">First</a></li>
+                <li class="page-item"><a class="page-link bg-dark"  title="Previous Page" role="button" onclick="changePage('page','{{page_obj.previous_page_number}}')" ><p style="transform: rotate(180deg);" class="p-0 m-0"><i  class="bi bi-fast-forward-fill"></i></p></a></li>
+            {% endif %}
+
+             <!-- Dynamic Page Numbers -->
+             {% for num in page_range %}
+                {% if num == page_obj.number %}
+                    <li class="page-item"><a class="page-link bg-secondary" ><strong>{{num}}</strong></a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link bg-dark" role="button" onclick="changePage('page','{{num}}')">{{ num }}</a>
+                        {% endif %}
+                        
+                {% endfor %}
+                        
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link bg-dark " role="button" onclick="changePage('page','{{ page_obj.next_page_number}}')" title="Next Page"><i class="bi bi-fast-forward-fill"></i></a></li>
+            <li class="page-item"><a class="page-link bg-dark"  role="button" onclick="changePage('page','{{paginator.num_pages}}')" title="Last Page">Last</a></li>
+            {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+
+
+    <script>
+        const searchInput = document.getElementById("searchbox");
+        const suggestionsBox = document.getElementById("suggesion_box");
+        const suggestionsList = document.getElementById("suggestionsList");
+
+        function fetchSuggestions(query) {
+            let clearbtn = document.getElementById('clearbtn');
+
+            if (!query) {
+                suggestionsBox.classList.add("d-none");
+                clearbtn.classList.add('d-none');
+                return;
+            }
+            clearbtn.classList.remove('d-none');
+
+            fetch(`/api/search/?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    data = JSON.parse(data)
+                    
+                    if (data.length > 0) {
+                        suggestionsBox.innerHTML = data.map(suggestion => 
+                            `<li class="text-white bg-dark list-group-item p-1" onclick="selectSuggestion('${suggestion}')">${highlightMatch(suggestion, query)}</li>`
+                        ).join("");
+                        suggestionsBox.classList.remove('d-none');
+                        console.log(suggestionsBox.innerHTML)
+                    } else {
+                        suggestionsBox.classList.add('d-none');
+                    }
+                });
+            }
+
+       // Function to highlight matching text in suggestions
+        function highlightMatch(text, query) {
+            const regex = new RegExp(`(${query})`, "gi");
+            return text.replace(regex, `<b style="color:blue;">$1</b>`);
+        }
+
+        function selectSuggestion(value) {
+            url =  new URL(window.location)
+            url = url['origin']+'/search/?query='+value;
+            window.location.href = url;
+          
+        }
+
+        searchInput.addEventListener("input", () => fetchSuggestions(searchInput.value));
+
+        document.addEventListener("click", (event) => {
+            if (!searchInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
+                suggestionsBox.classList.add("d-none");
+            }
+        });
+    </script>
+
+
+    <script>
+        let filters_box = document.getElementById('filters_box')
+        let filterbtn = document.getElementById('filterbtn')
+        
+        filterbtn.addEventListener("click", function (event) {
+                event.stopPropagation(); // Prevent immediate closure
+                filters_box.classList.toggle("d-none");
+            });
+
+        
+        document.addEventListener("click", function (event) {
+            if (!filters_box.contains(event.target) && !filters_box.contains(event.target) && !filterbtn.contains(event.target) && !filterbtn.contains(event.target)) {
+                filters_box.classList.add("d-none");
+            }
+        });
+
+
+      
+        function updateQueryParam(key, value) {
+            const url = new URL(window.location);
+            const params = new URLSearchParams(url.search);
+
+            if (value) {
+                params.set(key, value);  // Update or add the parameter
+            } else {
+                params.delete(key);  // Remove parameter if value is empty
+            }
+
+            url.search = params.toString();
+            window.history.pushState({}, '', url);  // Update the URL without refreshing
+
+            fetchData(url.search);  // Call your function to fetch updated data
+        }
+
+        // Example: Updating filters without losing pagination
+        function addFilter(key,value) {
+            updateQueryParam(key, value); 
+        }
+
+        // Example: Changing pagination without losing filters
+        function changePage(key,value) {
+            updateQueryParam(key,value); 
+        }
+
+        // Simulated fetch function (Replace with your actual AJAX/Fetch API call)
+        function fetchData(query) {
+            url =  new URL(window.location)
+            url = url['origin']+'/search/'+query;
+            window.location.href = url;
+            
+        }
+
+
+    </script>
+
+
+{% endblock main-content %}

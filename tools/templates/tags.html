@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block main-content %}
+
+<div class="container my-5 py-5">
+    
+    <div class="p-3">
+     <input type="text" value="" name="keywords" data-role="tagsinput" placeholder="tags for ai tool" />
+     <button onclick="tags()">Print Tags</button>
+    </div>
+    
+    <script>
+        function tags(){
+            console.log($('input[name="keywords"]').val().split(","))
+        }
+    </script>
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+
+{% endblock main-content %}
